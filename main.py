@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Query, status
 import uvicorn
 from connect import Connection
+from pathlib import Path
 
 database = Connection().database
 
@@ -26,6 +27,6 @@ async def get_message(email: str = Query(..., regex="[^@]+@[^@]+\.[^@]+"), phone
             
 if __name__ == "__main__":
     
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(f"{Path(__file__).stem}:app", host="0.0.0.0", port=8001, reload=True)
 
         
