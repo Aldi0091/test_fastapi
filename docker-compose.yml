@@ -1,0 +1,43 @@
+version: "3.3"
+services:
+
+  api:
+      build: .
+      ports:
+        - 8001:8001
+      restart: always
+      depends_on:
+        - mongodb
+      networks:
+        - mongonetwork
+      environment:
+        - MONGO_HOST=mongodb
+        - MONGO_PORT=27017
+        - MONGO_DATABASE=hosting_base
+        - MONGO_COLL=hosting_items
+      command: ["python", "main.py"] #["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+  
+  fill_db:
+      build: .
+      depends_on:
+        - mongodb
+      networks:
+        - mongonetwork
+      environment:
+        - MONGO_HOST=mongodb
+        - MONGO_PORT=27017
+        - MONGO_DATABASE=hosting_base
+        - MONGO_COLL=hosting_items
+      command: ["python", "database.py"]
+
+  mongodb:
+      image: mongo
+      restart: always
+      networks:
+         - mongonetwork
+      volumes:
+         - ./the_DB:/data/db
+      
+networks:
+  mongonetwork:
+    driver: bridge
